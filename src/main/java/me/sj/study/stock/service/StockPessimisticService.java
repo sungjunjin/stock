@@ -2,24 +2,22 @@ package me.sj.study.stock.service;
 
 import me.sj.study.stock.domain.entity.Stock;
 import me.sj.study.stock.repository.StockRepository;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Primary
-public class StockBasicService implements StockService {
+public class StockPessimisticService implements StockService {
     private final StockRepository stockRepository;
 
-    public StockBasicService(StockRepository stockRepository) {
+    public StockPessimisticService(StockRepository stockRepository) {
         this.stockRepository = stockRepository;
     }
 
     @Transactional
     @Override
-    public void decrease(long id, long quantity) {
-        Stock stock = stockRepository.findById(id).orElseThrow();
-        stock.decrease(quantity);
+    public synchronized void decrease(long id, long quantity) {
+        Stock stock = stockRepository.findByIdPessimistic(id);
+        stock.decrease(1);
 
         stockRepository.saveAndFlush(stock);
     }
