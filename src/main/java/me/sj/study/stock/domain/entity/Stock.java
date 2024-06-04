@@ -13,7 +13,7 @@ public class Stock {
     private long productId;
 
     @Column(name = "quantity")
-    private int quantity;
+    private long quantity;
 
     public Stock() {
 
@@ -24,7 +24,15 @@ public class Stock {
         this.quantity = quantity;
     }
 
-    public int getQuantity() {
+    public long getQuantity() {
         return quantity;
+    }
+
+    public void decrease(long quantity) {
+        if(this.quantity - quantity < 0) {
+            throw new RuntimeException("재고는 0개 미만이 될 수 없습니다");
+        }
+
+        this.quantity -= quantity;
     }
 }
